@@ -15,7 +15,9 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,6 +28,9 @@ public class AppCryptoImpl implements AppCrypto {
 
 	@Value("${rsa.b64.key.private}")
 	private String base64PrivateKey;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public String encrypt(String data) {
@@ -63,9 +68,13 @@ public class AppCryptoImpl implements AppCrypto {
 	}
 
 	@Override
-	public String hash(String data) {
-		// TODO Auto-generated method stub
-		return null;
+	public String encodePassword(String data) {
+		return passwordEncoder.encode(data);
+	}
+
+	@Override
+	public boolean verifyPassword(String plain, String hashed) {
+		return passwordEncoder.matches(plain, hashed);
 	}
 
 }
